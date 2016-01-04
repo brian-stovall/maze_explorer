@@ -3,14 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
 	/*maze datatype is a nested array filled with objects with
 	four properties, n, s, e, w that can have true or false values
 	true means a wall is in that direction in that cell
-	also a 'visited' property for the backtracker*/
+	also a 'visited' property for the backtracker
+	added an isVisible property for rendering purposes*/
 	function initMaze(height, width, startY, startX){
 		var result = [];
 		//build an open maze without walls
 		for (var y = 0; y < height; y++){
 			var thisRow = [];
 			for (var x = 0; x < width; x++){
-				thisRow.push( { 'n':true, 's':true, 'e':true, 'w':true, 'visited':false } );
+				thisRow.push( { 'n':true, 's':true, 'e':true, 'w':true, 'visited':false, 'isVisible':true } );
 			}
 			result.push(thisRow);
 		}
@@ -74,26 +75,40 @@ document.addEventListener('DOMContentLoaded', function () {
 				var room = maze[y][x];
 				cell.style['width'] = cellsize;
 				cell.style['height'] = cellsize;
-				if (room['n']) cell.style['border-top'] = border;
-				if (room['s']) cell.style['border-bottom'] = border;
-				if (room['e']) cell.style['border-right'] = border;
-				if (room['w']) cell.style['border-left'] = border;
+				if (room['isVisible']) {
+					if (room['n']) cell.style['border-top'] = border;
+					if (room['s']) cell.style['border-bottom'] = border;
+					if (room['e']) cell.style['border-right'] = border;
+					if (room['w']) cell.style['border-left'] = border;
+				}
 			}
 		}
 		return result;
 	}
 
 	//render the player in the maze
-	function drawPlayer(data, maze) {
+	function drawPlayer(maze, view) {
 		//remove the old player <p> if it exists
 		var player = document.getElementById('player');
 		if (player) player.parentNode.removeChild(player);
-		var y = data.playerY;
-		var x = data.playerX;
-		var row = maze.children[y];
+		var y = maze.playerY;
+		var x = maze.playerX;
+		var row = view.children[y];
 		var entry = row.children[x];
 		var player = entry.appendChild(document.createElement('p'));
 		player.setAttribute('id', 'player');
+	}
+
+	//use player position to set visibility on maze cells
+	function calcVision (maze) {
+		//first, set all maze cells to invisible
+		for (var row = 0; row < maze.length; row++)
+			for (var col = 0; col < maze[0].length; col++)
+				maze[row][col]['isVisible'] = false;
+		//start our search at the player's location
+		var curY = maze.playerY;
+		var curX = maze.playerX;
+		maze[curY][curX]['isVisible'] = true;
 	}
 		
   //change the player's location in the maze, returning 
@@ -120,6 +135,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	//draw the maze fragment to the screen
 	function renderMaze(view) {
+		//first remove the previous view, if it exists
+		var oldView = document.getElementById('maze');
+		if (oldView) oldView.parentNode.removeChild(oldView);
+		//now render the new one
 		document.body.appendChild(view);
 		return document.getElementById('maze');
 	}
@@ -137,7 +156,10 @@ document.addEventListener('DOMContentLoaded', function () {
 				else if (e.keyCode === 76 || e.keyCode == 39) dir = 'e';
 				else return; //don't do stuff for unlisted keys
 				movePlayer(maze, dir);
-				drawPlayer(maze, view);
+				calcVision(maze);
+				var newView = makeViewFragment(maze);
+				renderMaze(newView);
+				drawPlayer(newView, maze );
 			}
 	}
 
