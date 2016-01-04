@@ -1,0 +1,40 @@
+html {
+	box-sizing: border-box;
+	height:100vh;
+	width:100vw;
+}
+
+*, *:before, *:after {
+	box-sizing: inherit;
+	margin: 0;
+}
+
+body {
+	background-color:blue;
+	height:100%;
+	width:100%;
+}
+
+table {
+	position:relative;
+	width:75vmin;
+	height:75vmin;
+	top:15vmin;
+	left:15vmin;
+	border-spacing:0;
+	background-color:black;
+}
+
+td {
+	position:relative;
+}
+
+p {
+	position:relative;
+	background-color:green;
+	width: 50%;
+	height: 50%;
+	left:25%;
+	z-index:999;
+}
+
