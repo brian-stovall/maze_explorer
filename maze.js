@@ -5,18 +5,20 @@ document.addEventListener('DOMContentLoaded', function () {
 	true means a wall is in that direction in that cell
 	also a 'visited' property for the backtracker
 	added an isVisible property for rendering purposes*/
-	function initMaze(height, width, startY, startX){
+	function initMaze(height, width, startY, startX, vision, persist){
 		var result = [];
 		//build an open maze without walls
 		for (var y = 0; y < height; y++){
 			var thisRow = [];
 			for (var x = 0; x < width; x++){
-				thisRow.push( { 'n':true, 's':true, 'e':true, 'w':true, 'visited':false, 'isVisible':true } );
+				thisRow.push( { 'n':true, 's':true, 'e':true, 'w':true, 'visited':false, 'isVisible':false } );
 			}
 			result.push(thisRow);
 		}
 		result.playerY = startY;
 		result.playerX = startX;
+		result.vision = vision;
+		result.persist = persist;
 		return result;
 	}
 	
@@ -100,17 +102,35 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//use player position to set visibility on maze cells
-	function calcVision (maze, distance, persist) {
+	function calcVision (maze) {
 		//first, set all maze cells to invisible if !persist
-		if (!persist) {
+		if (!maze.persist) {
 			for (var row = 0; row < maze.length; row++)
 				for (var col = 0; col < maze[0].length; col++)
 					maze[row][col]['isVisible'] = false;
 		}
 		//start our search at the player's location
 		var curY = maze.playerY;
-		var curX = maze.playerX;
+		var curX = maze.playerX
 		maze[curY][curX]['isVisible'] = true;
+		//now look north
+		while (maze.playerY - --curY < maze.vision && maze[curY] && maze[curY][curX]['s'] === false ) 
+			maze[curY][curX]['isVisible'] = true;
+		curY = maze.playerY;
+		curX = maze.playerX
+		//look south
+		while (++curY - maze.playerY < maze.vision && maze[curY] && maze[curY][curX]['n'] === false ) 
+			maze[curY][curX]['isVisible'] = true;
+		curY = maze.playerY;
+		curX = maze.playerX
+		//look west
+		while (maze.playerX - --curX < maze.vision && maze[curY][curX] && maze[curY][curX]['e'] === false ) 
+			maze[curY][curX]['isVisible'] = true;
+		curY = maze.playerY;
+		curX = maze.playerX
+		//look east
+		while (++curX - maze.playerX < maze.vision && maze[curY][curX] && maze[curY][curX]['w'] === false ) 
+			maze[curY][curX]['isVisible'] = true;
 	}
 		
   //change the player's location in the maze, returning 
@@ -126,12 +146,12 @@ document.addEventListener('DOMContentLoaded', function () {
 		return false;
 	}
 
-	function initExplorer (yDim, xDim, startY, startX, vision) {
+	function initExplorer (yDim, xDim, startY, startX, vision, persist) {
 		//make the maze and dig it out
-		var maze = initMaze(yDim, xDim, startY, startX);
+		var maze = initMaze(yDim, xDim, startY, startX, vision, persist);
 		digMaze(maze, 0, 0);
 		//set up the initial view
-		calcVision(maze, vision, false);
+		calcVision(maze);
 		//set up the viewing object
 		var view = makeViewFragment(maze);
 		return [maze, view];
@@ -160,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				else if (e.keyCode === 76 || e.keyCode == 39) dir = 'e';
 				else return; //don't do stuff for unlisted keys
 				movePlayer(maze, dir);
-				calcVision(maze, 1, true);
+				calcVision(maze);
 				var newView = makeViewFragment(maze);
 				newView = renderMaze(newView);
 				drawPlayer(maze, newView);
@@ -168,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//tests
-	var mazeData = initExplorer (25,25, 5, 5, 1, true);
+	var mazeData = initExplorer (25,25, 5, 5, 6, true);
 	var maze = mazeData[0];
 	var view = mazeData[1];
 	var mazeElem = renderMaze(view);
