@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 		result.playerY = startY;
 		result.playerX = startX;
+		//for now, put the goal tile in the center
+		result.goalY = Math.floor(height/2);
+		result.goalX = Math.floor(width/2);
 		result.vision = vision;
 		result.persist = persist;
 		return result;
@@ -66,7 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		var width = maze.length;
 		var height = maze[0].length;
 		var result = document.createDocumentFragment();
-		var border = '1px solid white';
+		var plainBorder = '1px solid white';
+		var goalBorder = '1px solid gold';
 		var cellsize = Math.floor(100/width) + '%';
 		var tab = result.appendChild(document.createElement('table'));
     tab.setAttribute('id', 'maze');
@@ -78,6 +82,8 @@ document.addEventListener('DOMContentLoaded', function () {
 				cell.style['width'] = cellsize;
 				cell.style['height'] = cellsize;
 				if (room['isVisible']) {
+					var border = ( y == maze.goalY && x == maze.goalX) ?
+						goalBorder : plainBorder;
 					if (room['n']) cell.style['border-top'] = border;
 					if (room['s']) cell.style['border-bottom'] = border;
 					if (room['e']) cell.style['border-right'] = border;
@@ -184,11 +190,12 @@ document.addEventListener('DOMContentLoaded', function () {
 				var newView = makeViewFragment(maze);
 				newView = renderMaze(newView);
 				drawPlayer(maze, newView);
+				if (maze.playerY == maze.goalY && maze.goalX === maze.playerX) alert('You win!');
 			}
 	}
 
 	//tests
-	var mazeData = initExplorer (25,25, 5, 5, 6, true);
+	var mazeData = initExplorer (15, 15, 0, 0, 3, false);
 	var maze = mazeData[0];
 	var view = mazeData[1];
 	var mazeElem = renderMaze(view);
