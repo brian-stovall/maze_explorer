@@ -100,11 +100,13 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//use player position to set visibility on maze cells
-	function calcVision (maze) {
-		//first, set all maze cells to invisible
-		for (var row = 0; row < maze.length; row++)
-			for (var col = 0; col < maze[0].length; col++)
-				maze[row][col]['isVisible'] = false;
+	function calcVision (maze, distance, persist) {
+		//first, set all maze cells to invisible if !persist
+		if (!persist) {
+			for (var row = 0; row < maze.length; row++)
+				for (var col = 0; col < maze[0].length; col++)
+					maze[row][col]['isVisible'] = false;
+		}
 		//start our search at the player's location
 		var curY = maze.playerY;
 		var curX = maze.playerX;
@@ -124,13 +126,15 @@ document.addEventListener('DOMContentLoaded', function () {
 		return false;
 	}
 
-	function initExplorer ( yDim, xDim, startY, startX) {
+	function initExplorer (yDim, xDim, startY, startX, vision) {
 		//make the maze and dig it out
-		var data = initMaze(yDim, xDim, startY, startX);
-		digMaze(data, 0, 0);
+		var maze = initMaze(yDim, xDim, startY, startX);
+		digMaze(maze, 0, 0);
+		//set up the initial view
+		calcVision(maze, vision, false);
 		//set up the viewing object
-		var view = makeViewFragment(data);
-		return [data, view];
+		var view = makeViewFragment(maze);
+		return [maze, view];
 	}
 
 	//draw the maze fragment to the screen
@@ -156,15 +160,15 @@ document.addEventListener('DOMContentLoaded', function () {
 				else if (e.keyCode === 76 || e.keyCode == 39) dir = 'e';
 				else return; //don't do stuff for unlisted keys
 				movePlayer(maze, dir);
-				calcVision(maze);
+				calcVision(maze, 1, true);
 				var newView = makeViewFragment(maze);
-				renderMaze(newView);
-				drawPlayer(newView, maze );
+				newView = renderMaze(newView);
+				drawPlayer(maze, newView);
 			}
 	}
 
 	//tests
-	var mazeData = initExplorer (10,10, 5, 5);
+	var mazeData = initExplorer (25,25, 5, 5, 1, true);
 	var maze = mazeData[0];
 	var view = mazeData[1];
 	var mazeElem = renderMaze(view);
