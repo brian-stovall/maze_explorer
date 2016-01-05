@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	true means a wall is in that direction in that cell
 	also a 'visited' property for the backtracker
 	added an isVisible property for rendering purposes*/
-	function initMaze(height, width, startY, startX, vision, persist){
+	function initMaze(height, width, startY, startX, vision, persist, responsiveBorder){
 		var result = [];
 		//build an open maze without walls
 		for (var y = 0; y < height; y++){
@@ -17,11 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		}
 		result.playerY = startY;
 		result.playerX = startX;
-		//for now, put the goal tile in the center
-		result.goalY = Math.floor(height/2);
-		result.goalX = Math.floor(width/2);
+		//place the goal tile randomly, for now
+		result.goalY = Math.floor(Math.random() * height);
+		result.goalX = Math.floor(Math.random() * width);
 		result.vision = vision;
 		result.persist = persist;
+		result.responsiveBorder = responsiveBorder;
+		//the farthest two objects can be apart in the maze
+		result.maxManhattan = length + height; 
 		return result;
 	}
 	
@@ -38,8 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
 			arr[randIdx] = swap;
 			curIdx--;
 		}
+		//some messy math that makes the walls brighter as you near the goal
 	return arr;
 	};
+
+	//get the Manhattan distance between two sets of points
+	function getManhattan(y1, x1, y2, x2) {
+		return Math.abs(y1-y2) + Math.abs(x1 - x2);
+	}
 
 	//use a recursive backtracker to dig out the maze
 	function digMaze(maze, y, x) {
@@ -65,12 +74,19 @@ document.addEventListener('DOMContentLoaded', function () {
 	 
 	//render the maze as an html table with borders for walls
 	//and return a documentFragment to be drawn later
+	//responsiveBorder boolean determines whether or not to
+	//make walls brighter as player nears goal
 	function makeViewFragment(maze) {
 		var width = maze.length;
 		var height = maze[0].length;
 		var result = document.createDocumentFragment();
-		var plainBorder = '1px solid white';
-		var goalBorder = '1px solid gold';
+		//some messy math that makes the walls brighter as you near the goal
+		var colorString = (maze.responsiveBorder) ? 
+		Math.floor((255 - (51 * (getManhattan(maze.playerX, maze.playerY, maze.goalX, maze.goalY)/
+		maze.maxManhattan))))
+		.toString(16).repeat(3) : 'FFFFFFF';
+		var plainBorder = '3px solid #' + colorString;
+		var goalBorder = '3px solid gold';
 		var cellsize = Math.floor(100/width) + '%';
 		var tab = result.appendChild(document.createElement('table'));
     tab.setAttribute('id', 'maze');
@@ -152,9 +168,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		return false;
 	}
 
-	function initExplorer (yDim, xDim, startY, startX, vision, persist) {
+	function initExplorer (yDim, xDim, startY, startX, vision, persist, responsiveBorder) {
 		//make the maze and dig it out
-		var maze = initMaze(yDim, xDim, startY, startX, vision, persist);
+		var maze = initMaze(yDim, xDim, startY, startX, vision, persist, responsiveBorder);
 		digMaze(maze, 0, 0);
 		//set up the initial view
 		calcVision(maze);
@@ -195,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//tests
-	var mazeData = initExplorer (15, 15, 0, 0, 3, false);
+	var mazeData = initExplorer (15, 15, 0, 0, 3, false, true);
 	var maze = mazeData[0];
 	var view = mazeData[1];
 	var mazeElem = renderMaze(view);
