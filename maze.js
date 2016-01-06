@@ -186,7 +186,11 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (oldView) oldView.parentNode.removeChild(oldView);
 		//now render the new one
 		document.body.appendChild(view);
-		return document.getElementById('maze');
+		var mazeElem = document.getElementById('maze');
+		//do some centering
+		mazeElem.style.top = ((window.innerHeight - mazeElem.offsetHeight) / 2).toString() + 'px';
+		mazeElem.style.left = ((window.innerWidth - mazeElem.offsetWidth) / 2).toString() + 'px';
+		return mazeElem;
 	}
 
 	//function to toggle keyboard control of player 
@@ -210,11 +214,17 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 	}
 
-	//tests
-	var mazeData = initExplorer (15, 15, 0, 0, 3, false, true);
-	var maze = mazeData[0];
-	var view = mazeData[1];
-	var mazeElem = renderMaze(view);
-	drawPlayer(maze, mazeElem);
-	allowKeys(true, maze, mazeElem);
+
+	//this function encapsulates all the code to make a 2d maze exploration happen
+	function explore2d (height, width, startY, startX, vision, persist, responsiveBorder) {
+		var mazeData = initExplorer(height, width, startY, startX, vision, persist, responsiveBorder); 
+		var maze = mazeData[0];
+		var view = mazeData[1];
+		var mazeElem = renderMaze(view);
+		drawPlayer(maze, mazeElem);
+		allowKeys(true, maze, mazeElem);
+	}
+
+	//test code
+	explore2d(15, 15, 0, 0, 3, false, true);
 });
