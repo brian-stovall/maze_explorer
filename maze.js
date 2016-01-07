@@ -89,8 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			//sometimes the ratio'd colorstring is 1 digit, if so, make it black
 			if (colorString.length < 6) colorString = '000000'; 
 		console.log(manhattanRatio + ' ' + colorString);
-		var plainBorder = '3px solid #' + colorString;
-		var goalBorder = '3px solid gold';
+		var border = '5px solid #' + colorString;
 		var cellsize = Math.floor(100/width) + '%';
 		var tab = result.appendChild(document.createElement('table'));
     tab.setAttribute('id', 'maze');
@@ -102,8 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 				cell.style['width'] = cellsize;
 				cell.style['height'] = cellsize;
 				if (room['isVisible']) {
-					var border = ( y == maze.goalY && x == maze.goalX) ?
-						goalBorder : plainBorder;
+					if (y === maze.goalY && x === maze.goalX) cell.style['background-color'] = '#ddb500';
 					if (room['n']) cell.style['border-top'] = border;
 					if (room['s']) cell.style['border-bottom'] = border;
 					if (room['e']) cell.style['border-right'] = border;

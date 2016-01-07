@@ -24,6 +24,7 @@ table {
 	left:15vmin;
 	border-spacing:0;
 	background-color:transparent;
+	border-collapse:collapse;
 }
 
 td {
