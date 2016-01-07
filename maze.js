@@ -238,5 +238,5 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//test code
-	explore2d(5, 5, 3, true, true);
+	explore2d(15, 15, 3, true, true);
 });
