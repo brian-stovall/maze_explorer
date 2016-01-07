@@ -2,10 +2,23 @@
 <html>
 <head>
 	<meta charset='utf-8'>
-	<script src='maze.js' type='text/javascript'></script>
 	<link href='maze.css' type='text/css' rel='stylesheet'>
+	<script src='maze.js' type='text/javascript'></script>
+	<title>Yeah!</title>
 </head>
 <body>
+	<fieldset class='initForm'>
+		<legend>What kind of place to explore?</legend>
+		<p><label for='size1' title='A 7x7 maze'><input type='radio' name = 'size' id='size1' value='7' checked> Cave</label></p>
+		<p><label for='size2' title='A 13x13 maze'><input type='radio' name = 'size' id='size2' value='13'> Catacomb</label></p>
+		<p><label for='size3' title='A 19x19  maze'><input type='radio' name = 'size' id='size3' value='19'> Lost City</label></p>
+	</fieldset>
+	<fieldset class='initForm'>
+		<legend>What's in your pack?</legend>
+		<p><label for='map' title='Take this to create a persistent map as you explore.'><input type='checkbox' id='map'> Cartography kit</label></p>
+		<p><label for='gps' title='Causes the walls to darken as you near your goal.'><input type='checkbox' id='gps'>  G.P.S.</label></p>
+		<p><label for='light' title='Lets you see further.'><input type='checkbox' id='light'> Light Source</label></p>
+	</fieldset>
+	<button type='button' id='goButton' class='initForm'>Let's head out!</button>
 </body>
 </html>
-

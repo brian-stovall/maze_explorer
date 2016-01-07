@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-	
+  //add an event listener to the 'go' button that starts an exploration based on the 
+	//user's choices
+  var goButton = document.getElementById('goButton');
+	goButton.onclick = function () {
+		var size = document.querySelector('input[name="size"]:checked').value;
+		var vision = (document.getElementById('light').checked) ? 6 : 1;
+		var persist = document.getElementById('map').checked;
+		var responsiveBorder = document.getElementById('gps').checked;
+		explore2d (size, size, vision, persist, responsiveBorder);
+	};
+
 	/*maze datatype is a nested array filled with objects with
 	four properties, n, s, e, w that can have true or false values
 	true means a wall is in that direction in that cell
@@ -229,6 +239,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	//this function encapsulates all the code to make a 2d maze exploration happen
 	function explore2d (height, width, vision, persist, responsiveBorder) {
+		//get and hide the forms that got us here
+		var forms = document.getElementsByClassName("initForm");
+		for (var i = 0; i < forms.length; i++)
+			forms[i].style.display = 'none';
+		//now continue with display
 		var mazeData = initExplorer(height, width, vision, persist, responsiveBorder); 
 		var maze = mazeData[0];
 		var view = mazeData[1];
@@ -236,7 +251,4 @@ document.addEventListener('DOMContentLoaded', function () {
 		drawPlayer(maze, mazeElem);
 		allowKeys(true, maze, mazeElem);
 	}
-
-	//test code
-	explore2d(15, 15, 3, true, true);
 });
