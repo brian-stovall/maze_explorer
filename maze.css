@@ -10,7 +10,8 @@ html {
 }
 
 body {
-	background-color:blue;
+	background-image:url('art/parchment.png');
+	background-size:cover;
 	height:100%;
 	width:100%;
 }
@@ -22,7 +23,7 @@ table {
 	top:15vmin;
 	left:15vmin;
 	border-spacing:0;
-	background-color:black;
+	background-color:transparent;
 }
 
 td {

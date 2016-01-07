@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		result.persist = persist;
 		result.responsiveBorder = responsiveBorder;
 		//the farthest two objects can be apart in the maze
-		result.maxManhattan = length + height; 
+		result.maxManhattan = width + height - 2; 
 		return result;
 	}
 	
@@ -77,14 +77,18 @@ document.addEventListener('DOMContentLoaded', function () {
 	//responsiveBorder boolean determines whether or not to
 	//make walls brighter as player nears goal
 	function makeViewFragment(maze) {
-		var width = maze.length;
+		var width = maze.length; 
 		var height = maze[0].length;
 		var result = document.createDocumentFragment();
-		//some messy math that makes the walls brighter as you near the goal
+		const LIGHTEST = 150; //the lightest white we want the responsive lines to be
+		var manhattanRatio = getManhattan(maze.playerX, maze.playerY, maze.goalX, maze.goalY)
+																			/maze.maxManhattan;
+		//for responsive maze set wall colors to black at the goal and LIGHTEST at max distance	
 		var colorString = (maze.responsiveBorder) ? 
-		Math.floor((255 - (51 * (getManhattan(maze.playerX, maze.playerY, maze.goalX, maze.goalY)/
-		maze.maxManhattan))))
-		.toString(16).repeat(3) : 'FFFFFFF';
+			Math.floor(LIGHTEST * manhattanRatio).toString(16).repeat(3) : 'FFFFFFF';
+			//sometimes the ratio'd colorstring is 1 digit, if so, make it black
+			if (colorString.length < 6) colorString = '000000'; 
+		console.log(manhattanRatio + ' ' + colorString);
 		var plainBorder = '3px solid #' + colorString;
 		var goalBorder = '3px solid gold';
 		var cellsize = Math.floor(100/width) + '%';
@@ -226,5 +230,5 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//test code
-	explore2d(15, 15, 0, 0, 3, false, true);
+	explore2d(5, 5, 0, 0, 3, true, true);
 });
