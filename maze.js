@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	true means a wall is in that direction in that cell
 	also a 'visited' property for the backtracker
 	added an isVisible property for rendering purposes*/
-	function initMaze(height, width, startY, startX, vision, persist, responsiveBorder){
+	function initMaze(height, width, vision, persist, responsiveBorder){
 		var result = [];
 		//build an open maze without walls
 		for (var y = 0; y < height; y++){
@@ -15,14 +15,24 @@ document.addEventListener('DOMContentLoaded', function () {
 			}
 			result.push(thisRow);
 		}
-		result.playerY = startY;
-		result.playerX = startX;
 		//place the goal tile randomly, for now
 		result.goalY = Math.floor(Math.random() * height);
 		result.goalX = Math.floor(Math.random() * width);
 		result.vision = vision;
 		result.persist = persist;
 		result.responsiveBorder = responsiveBorder;
+		//start the player in the corner with the greatest
+		//manhattan dist. from the goal
+		var startLocations = [ [height - 1, 0], [0, width - 1], [height - 1, width - 1] ];
+		//start out at 0, 0 and find max distance
+		result.playerY = 0;
+		result.playerX = 0;
+		for (var i = 0; i < startLocations.length; i++)
+			if (getManhattan(result.playerY, result.playerX, result.goalY, result.goalX) <
+				  getManhattan(startLocations[i][0], startLocations[i][1] , result.goalY, result.goalX)) {
+				result.playerY = startLocations[i][0];
+				result.playerX = startLocations[i][1];
+			}
 		//the farthest two objects can be apart in the maze
 		result.maxManhattan = width + height - 2; 
 		return result;
@@ -170,9 +180,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		return false;
 	}
 
-	function initExplorer (yDim, xDim, startY, startX, vision, persist, responsiveBorder) {
+	function initExplorer (yDim, xDim, vision, persist, responsiveBorder) {
 		//make the maze and dig it out
-		var maze = initMaze(yDim, xDim, startY, startX, vision, persist, responsiveBorder);
+		var maze = initMaze(yDim, xDim, vision, persist, responsiveBorder);
 		digMaze(maze, 0, 0);
 		//set up the initial view
 		calcVision(maze);
@@ -218,8 +228,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 	//this function encapsulates all the code to make a 2d maze exploration happen
-	function explore2d (height, width, startY, startX, vision, persist, responsiveBorder) {
-		var mazeData = initExplorer(height, width, startY, startX, vision, persist, responsiveBorder); 
+	function explore2d (height, width, vision, persist, responsiveBorder) {
+		var mazeData = initExplorer(height, width, vision, persist, responsiveBorder); 
 		var maze = mazeData[0];
 		var view = mazeData[1];
 		var mazeElem = renderMaze(view);
@@ -228,5 +238,5 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	//test code
-	explore2d(5, 5, 0, 0, 3, true, true);
+	explore2d(5, 5, 3, true, true);
 });
