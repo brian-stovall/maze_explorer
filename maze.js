@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+	//disable the stylesheet for the main game
+	document.getElementById('exploreStylesheet').disabled='true';
+
   //add an event listener to the 'go' button that starts an exploration based on the 
 	//user's choices
   var goButton = document.getElementById('goButton');
 	goButton.onclick = function () {
-		var size = document.querySelector('input[name="size"]:checked').value;
+		var size = parseInt(document.querySelector('input[name="size"]:checked').value);
 		var vision = (document.getElementById('light').checked) ? Math.floor(size/2) : 1;
 		var persist = document.getElementById('map').checked;
 		var responsiveBorder = document.getElementById('gps').checked;
@@ -105,10 +108,9 @@ document.addEventListener('DOMContentLoaded', function () {
 																			/maze.maxManhattan;
 		//for responsive maze set wall colors to black at the goal and LIGHTEST at max distance	
 		var colorString = (maze.responsiveBorder) ? 
-			Math.floor(LIGHTEST * manhattanRatio).toString(16).repeat(3) : '000000';
-			//sometimes the ratio'd colorstring is 1 digit, if so, make it black
-			if (colorString.length < 6) colorString = '000000'; 
-		console.log(manhattanRatio + ' ' + colorString);
+		Math.floor(LIGHTEST * manhattanRatio).toString(16).repeat(3) : '000000';
+		//sometimes the ratio'd colorstring is 1 digit, if so, make it black
+		if (colorString.length < 6) colorString = '000000'; 
 		var border = '5px solid #' + colorString;
 		var cellsize = Math.floor(100/width) + '%';
 		var tab = result.appendChild(document.createElement('table'));
@@ -243,7 +245,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		var forms = document.getElementsByClassName("initForm");
 		for (var i = 0; i < forms.length; i++)
 			forms[i].style.display = 'none';
-		//now continue with display
+		//now continue with display, starting by enabling proper stylesheet
+		document.getElementById('exploreStylesheet').disabled = false;
 		var mazeData = initExplorer(height, width, vision, persist, responsiveBorder); 
 		var maze = mazeData[0];
 		var view = mazeData[1];
