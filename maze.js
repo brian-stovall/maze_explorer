@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var goButton = document.getElementById('goButton');
 	goButton.onclick = function () {
 		var size = document.querySelector('input[name="size"]:checked').value;
-		var vision = (document.getElementById('light').checked) ? 6 : 1;
+		var vision = (document.getElementById('light').checked) ? Math.floor(size/2) : 1;
 		var persist = document.getElementById('map').checked;
 		var responsiveBorder = document.getElementById('gps').checked;
 		explore2d (size, size, vision, persist, responsiveBorder);
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
 																			/maze.maxManhattan;
 		//for responsive maze set wall colors to black at the goal and LIGHTEST at max distance	
 		var colorString = (maze.responsiveBorder) ? 
-			Math.floor(LIGHTEST * manhattanRatio).toString(16).repeat(3) : 'FFFFFFF';
+			Math.floor(LIGHTEST * manhattanRatio).toString(16).repeat(3) : '000000';
 			//sometimes the ratio'd colorstring is 1 digit, if so, make it black
 			if (colorString.length < 6) colorString = '000000'; 
 		console.log(manhattanRatio + ' ' + colorString);
