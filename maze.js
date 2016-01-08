@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
 	//disable the stylesheet for the main game
 	document.getElementById('exploreStylesheet').disabled='true';
+	//initialize the forms
+	initForms();
 
   //add an event listener to the 'go' button that starts an exploration based on the 
 	//user's choices
@@ -12,6 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		var responsiveBorder = document.getElementById('gps').checked;
 		explore2d (size, size, vision, persist, responsiveBorder);
 	};
+
+	//a function that initializes the forms on the menu
+	function initForms() {
+		document.getElementById('size1').checked = true;
+		var checkBoxes = document.querySelectorAll('input[type="checkbox"]');
+		for (var i = 0; i < checkBoxes.length; i++)
+			checkBoxes[i].checked = false;
+	}
 
 	/*maze datatype is a nested array filled with objects with
 	four properties, n, s, e, w that can have true or false values
